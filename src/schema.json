@@ -1,0 +1,20 @@
+{
+    "title": "Custom dev server Target",
+    "description": "Custom dev server for Build Facade.",
+    "type": "object",
+    "properties": {
+      "devServerTarget": {
+        "type": "string",
+        "description": "Dev server target to run."
+      },
+      "stubsConfigFile": {
+        "type": "string",
+        "description": "path to stubby for node configuration"
+      },
+      "watch": {
+        "type": "boolean",
+        "description": "watch mode for stubby"
+      }
+    },
+    "additionalProperties": false
+}

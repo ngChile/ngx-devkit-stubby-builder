@@ -1,0 +1,9 @@
+{
+    "builders": {
+      "serve": {
+        "class": "./src/custom-serve",
+        "schema": "./src/schema.json",
+        "description": " Dev server custom runner using Stubby server."
+      }
+    }
+  }
