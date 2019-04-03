@@ -72,7 +72,8 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                             ...options,
                             quiet: false,
                             watch: stubsConfigFullPath,
-                            data,
+                            location: 'localhost',
+			    data,
                         });
                     } else {
                         throw new Error('Please provide "stubsConfigFile" option on angular.json file for architecture "development"');
