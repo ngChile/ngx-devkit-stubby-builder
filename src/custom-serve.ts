@@ -13,7 +13,7 @@ import {
     BuildEvent
 } from '@angular-devkit/architect';
 import { Observable, of } from 'rxjs';
-import { concatMap, map, tap, catchError } from 'rxjs/operators';
+import { concatMap, tap, catchError } from 'rxjs/operators';
 
 const { Stubby } = require('stubby');
 
@@ -59,28 +59,27 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
 
     private runStubs(options: CustomServeBuilderOptions): Observable<BuildEvent> {
         const root = this.context.workspace.root;
-        return of(null)
-            .pipe(
-                tap(() => {
-                    if (options.stubsConfigFile) {
-                        const stubsConfigPath = options.stubsConfigFile.replace(/^\.\//g, '');
-                        const stubsConfigFullPath = `${root}/${stubsConfigPath}`;
-                        const data = require(stubsConfigFullPath);
-                        const stubsServer = new Stubby();
 
-                        stubsServer.start({
-                            ...options,
-                            quiet: false,
-                            watch: stubsConfigFullPath,
-                            location: 'localhost',
-			    data,
-                        });
-                    } else {
-                        throw new Error('Please provide "stubsConfigFile" option on angular.json file for architecture "development"');
-                    }
-                }),
-                map(() => ({success: true}))
-            );
+        return Observable.create((observer: any) => {
+            if (options.stubsConfigFile) {
+                const stubsConfigPath = options.stubsConfigFile.replace(/^\.\//g, '');
+                const stubsConfigFullPath = `${root}/${stubsConfigPath}`;
+                const data = require(stubsConfigFullPath);
+                const stubsServer = new Stubby();
+                stubsServer.start({
+                    ...options,
+                    quiet: false,
+                    watch: stubsConfigFullPath,
+                    location: 'localhost',
+                    data,
+                }, () => {
+                    console.log('Stubby Server Running ...');
+                    observer.next({ success: true })
+                });
+            } else {
+                throw new Error('Please provide "stubsConfigFile" option on angular.json file for architecture "development"');
+            }
+        });
     }
 
     private startServer(options: CustomServeBuilderOptions) {
