@@ -14,7 +14,7 @@
     "test": "jest",
     "tsc": "tsc",
     "build": "npm run tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
     "@angular-devkit/architect": "^0.7.1",
