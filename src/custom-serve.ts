@@ -55,6 +55,10 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
             );
     }
 
+    private replacePathForWindows(path: string) {
+        return path.replace(/^\/C\//, '/c/');
+    }
+
     private normalizeResponseFilePaths(data: any[], rootPath: Path) {
         return data.map(({ request, response }) => {
             if(response.file) {
@@ -64,7 +68,7 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                         ...response,
                         file: resolve(
                             rootPath,
-                            normalize(response.file)
+                            normalize(this.replacePathForWindows(response.file))
                         )
                     }
                 };
@@ -81,7 +85,7 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                     root, 
                     normalize(options.stubsConfigFile)
                 );
-                const data = require(stubsConfigFullPath);
+                const data = require(this.replacePathForWindows(stubsConfigFullPath));
                 const stubsServer = new Stubby();
 
                 stubsServer.start({
