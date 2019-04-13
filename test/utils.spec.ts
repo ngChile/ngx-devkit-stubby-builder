@@ -20,6 +20,21 @@ test('should apply replacement for windows in config response', () => {
             response: {
                 file: 'users.json'
             }
+        },
+        {
+            request: {},
+            response: [
+                {
+                    file: 'users1.json'
+                },
+                {
+                    file: 'users2.json'
+                },
+            ]
+        },
+        {
+            request: {},
+            response: {}
         }
     ];
     const expectedData = [
@@ -28,9 +43,24 @@ test('should apply replacement for windows in config response', () => {
             response: {
                 file: '/c/Users/gpincheiraa/users.json'
             }
+        },
+        {
+            request: {},
+            response: [
+                {
+                    file: '/c/Users/gpincheiraa/users1.json'
+                },
+                {
+                    file: '/c/Users/gpincheiraa/users2.json'
+                },
+            ]
+        },
+        {
+            request: {},
+            response: {}
         }
     ];
     const rootPath = '/C/Users/gpincheiraa' as Path;
-    
+
     expect(normalizeResponseFilePaths(data, rootPath)).toEqual(expectedData);
 });

@@ -17,16 +17,26 @@ export function normalizeResponseFilePaths(
     rootPath: Path
 ): any[] {
     return data.map(({ request, response }) => {
-        if(response.file) {
-            const newFilePath = resolve(rootPath,normalize(response.file));
-            return {
-                request,
-                response: {
-                    ...response,
+        const responseMapper = (responseData: any) => {
+            if (responseData.file) {
+                const newFilePath = resolve(rootPath,normalize(responseData.file));
+                return {
+                    ...responseData,
                     file: replacePathForWindows(newFilePath)  
                 }
-            };
+            }
+            return responseData;
+        };
+
+        if(Array.isArray(response)) {
+            return {
+                request,
+                response: response.map(responseMapper)
+            } 
         }
-        return { request, data };
+        return { 
+            request, 
+            response: responseMapper(response)
+        };
     });
 }

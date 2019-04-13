@@ -45,6 +45,6 @@
       "packages/schematics/*/*/*files/**/*",
       "tmp/**/*",
       "scripts/patches/**/*",
-      "tests/**/*"
+      "test/**/*"
     ]
   }
