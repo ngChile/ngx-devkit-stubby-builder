@@ -1,10 +1,8 @@
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
+import {
+    normalize,
+    resolve,
+    Path,
+} from '@angular-devkit/core';
 import {
     Builder,
     BuilderConfiguration,
@@ -57,23 +55,43 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
             );
     }
 
+    private normalizeResponseFilePaths(data: any[], rootPath: Path) {
+        return data.map(({ request, response }) => {
+            if(response.file) {
+                return {
+                    request,
+                    response: {
+                        ...response,
+                        file: resolve(
+                            rootPath,
+                            normalize(response.file)
+                        )
+                    }
+                };
+            }
+            return { request, data };
+        });
+    }
     private runStubs(options: CustomServeBuilderOptions): Observable<BuildEvent> {
-        const root = this.context.workspace.root;
+        const root = normalize(this.context.workspace.root);
 
         return Observable.create((observer: any) => {
             if (options.stubsConfigFile) {
-                const stubsConfigPath = options.stubsConfigFile.replace(/^\.\//g, '');
-                const stubsConfigFullPath = `${root}/${stubsConfigPath}`;
+                const stubsConfigFullPath = resolve(
+                    root, 
+                    normalize(options.stubsConfigFile)
+                );
                 const data = require(stubsConfigFullPath);
                 const stubsServer = new Stubby();
+
                 stubsServer.start({
                     ...options,
                     quiet: false,
                     watch: stubsConfigFullPath,
                     location: 'localhost',
-                    data,
+                    data: this.normalizeResponseFilePaths(data, root),
                 }, () => {
-                    console.log('Stubby Server Running ...');
+                    this.context.logger.info('Stubby Server Running ...');
                     observer.next({ success: true })
                 });
             } else {
