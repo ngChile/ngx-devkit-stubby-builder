@@ -1,7 +1,6 @@
 import {
     normalize,
-    resolve,
-    Path,
+    resolve
 } from '@angular-devkit/core';
 import {
     Builder,
@@ -12,6 +11,10 @@ import {
 } from '@angular-devkit/architect';
 import { Observable, of } from 'rxjs';
 import { concatMap, tap, catchError } from 'rxjs/operators';
+import { 
+    replacePathForWindows,
+    normalizeResponseFilePaths
+} from './utils';
 
 const { Stubby } = require('stubby');
 
@@ -55,27 +58,6 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
             );
     }
 
-    private replacePathForWindows(path: string) {
-        return path.replace(/^\/C\//, '/c/');
-    }
-
-    private normalizeResponseFilePaths(data: any[], rootPath: Path) {
-        return data.map(({ request, response }) => {
-            if(response.file) {
-                return {
-                    request,
-                    response: {
-                        ...response,
-                        file: resolve(
-                            rootPath,
-                            normalize(this.replacePathForWindows(response.file))
-                        )
-                    }
-                };
-            }
-            return { request, data };
-        });
-    }
     private runStubs(options: CustomServeBuilderOptions): Observable<BuildEvent> {
         const root = normalize(this.context.workspace.root);
 
@@ -85,7 +67,7 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                     root, 
                     normalize(options.stubsConfigFile)
                 );
-                const data = require(this.replacePathForWindows(stubsConfigFullPath));
+                const data = require(replacePathForWindows(stubsConfigFullPath));
                 const stubsServer = new Stubby();
 
                 stubsServer.start({
@@ -93,7 +75,7 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                     quiet: false,
                     watch: stubsConfigFullPath,
                     location: 'localhost',
-                    data: this.normalizeResponseFilePaths(data, root),
+                    data: normalizeResponseFilePaths(data, root),
                 }, () => {
                     this.context.logger.info('Stubby Server Running ...');
                     observer.next({ success: true })

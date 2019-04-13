@@ -2,6 +2,7 @@
 
 # compiled output
 *.js
+!jest.config.js
 *.d.ts
 /dist
 /tmp
