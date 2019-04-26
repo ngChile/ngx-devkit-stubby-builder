@@ -9,6 +9,7 @@ import {
     BuilderDescription,
     BuildEvent
 } from '@angular-devkit/architect';
+import { readFile } from '@angular-devkit/schematics/tools/file-system-utility';
 import { Observable, of } from 'rxjs';
 import { concatMap, tap, catchError } from 'rxjs/operators';
 import { 
@@ -67,7 +68,7 @@ export class CustomServeBuilder implements Builder<CustomServeBuilderOptions> {
                     root, 
                     normalize(options.stubsConfigFile)
                 );
-                const data = require(replacePathForWindows(stubsConfigFullPath));
+                const data = JSON.parse(readFile(stubsConfigFullPath));
                 const stubsServer = new Stubby();
 
                 stubsServer.start({
