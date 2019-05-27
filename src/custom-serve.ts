@@ -58,7 +58,6 @@ function runStubs(
                 join(context.workspaceRoot, options.stubsConfigFile)
             );
             const data = JSON.parse(readFileSync(stubsConfigFullPath, 'utf8'));
-
             const stubsServer = new Stubby();
 
             stubsServer.start({

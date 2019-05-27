@@ -1,16 +1,20 @@
-import { Architect } from '@angular-devkit/architect';
+import { Architect, BuilderContext } from '@angular-devkit/architect';
 import { scheduleTargetAndForget, targetFromTargetString } from '@angular-devkit/architect/src/api';
 import { TestingArchitectHost } from '@angular-devkit/architect/testing/';
 import { schema, logging } from '@angular-devkit/core';
-import { readFileSync } from 'fs';
 import { normalize } from 'path';
 import { of } from 'rxjs';
 import { CustomServeBuilderOptions } from './custom-serve';
 
+const { readFileSync } = require('fs');
 const { Stubby } = require('stubby');
 
-jest.mock('fs');
-jest.mock('stubby');
+jest.mock('fs', () => ({
+    readFileSync: jest.fn(),
+}));
+jest.mock('stubby', () => ({
+    Stubby: jest.fn(),
+}));
 
 describe('Ngx Devkit Stubby Builder', () => {
     let architect: Architect;
@@ -32,6 +36,30 @@ describe('Ngx Devkit Stubby Builder', () => {
     });
 
     it('test', async () => {
+        // Configure mocks, stubs and options
+        const stubbyOptions: CustomServeBuilderOptions = { 
+            devServerTarget: 'web-app:serve',
+            stubsConfigFile: 'stubby.json',
+            watch: false
+        };
+        const stubbyConfigAsFile = `
+            {
+                "request": {
+                    "url": "^/auth-service/v1/login$",
+                    "method": "POST"
+                },
+                "response": {
+                    "status": 200
+                }
+            }
+        `;
+        const stubbyConfigAsObject = JSON.parse(stubbyConfigAsFile);
+        readFileSync.mockReturnValue(stubbyConfigAsFile);
+        const stubbyStartMock = jest.fn()
+            .mockImplementation((options, callback) => callback());
+        Stubby.mockImplementation(() => ({
+            start: stubbyStartMock,
+        }));
         (scheduleTargetAndForget as any) = jest
             .fn()
             .mockReturnValue(
@@ -40,28 +68,24 @@ describe('Ngx Devkit Stubby Builder', () => {
         (targetFromTargetString as any) = jest
             .fn()
             .mockReturnValue(null);
-        // A "run" can contain multiple outputs, and contains progress information.
-        const options: CustomServeBuilderOptions = { 
-            devServerTarget: 'test',
-            stubsConfigFile: 'test',
-            watch: false
-        };
+        
+        // Execute the builder and wait for results
         const run = await architect.scheduleBuilder(
             'ngx-devkit-stubby-builder:serve', 
-            options
+            stubbyOptions,
         );
-
-        // The "result" member is the next output of the runner.
-        // This is of type BuilderOutput.
         const output = await run.result;
-        
-        // Stop the builder from running. This really stops Architect from keeping
-        // the builder associated states in memory, since builders keep waiting
-        // to be scheduled.
         await run.stop();
-
-        // Expect that it succeeded.
+        
+        // Expectations
         expect(output.success).toBe(true);
-        expect(targetFromTargetString).toHaveBeenCalledWith(options.devServerTarget);
+        expect(targetFromTargetString).toHaveBeenCalledWith(stubbyOptions.devServerTarget);
+        expect(stubbyStartMock).toHaveBeenCalledWith({
+            ...stubbyOptions,
+            quiet: false,
+            watch: stubbyOptions.stubsConfigFile,
+            location: 'localhost',
+            data: stubbyConfigAsObject,
+        }, expect.any(Function));
     });
 });
