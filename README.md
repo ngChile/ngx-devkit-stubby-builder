@@ -2,7 +2,13 @@
 [travis-image]: https://api.travis-ci.org/gpincheiraa/ngx-devkit-stubby-builder.svg?branch=master
 [travis-url]: https://travis-ci.org/gpincheiraa/ngx-devkit-stubby-builder
 
-[![Build Status][travis-image]][travis-url]
+[npm-nodeico-image]: https://nodei.co/npm/ngx-devkit-stubby-builder.png?downloads=true&downloadRank=true&stars=true
+[npm-nodeico-url]: https://nodei.co/npm/ngx-devkit-stubby-builder/
+
+[npm-version-image]: https://badge.fury.io/js/ngx-devkit-stubby-builder.svg
+[npm-version-url]: https://badge.fury.io/js/ngx-devkit-stubby-builder
+
+[![Build Status][travis-image]][travis-url]  [![npm version][npm-version-image]][npm-version-url]  [![NPM][npm-nodeico-image]][npm-nodeico-url] 
 
 Builder architecture that use a Stubby server for handle http request when the Angular web application was serve using Angular >= 8 @angular-devkit/architect API.
 
