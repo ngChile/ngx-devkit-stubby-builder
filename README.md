@@ -4,7 +4,7 @@
 
 [![Build Status][travis-image]][travis-url]
 
-Builder architecture that use a Stubby server for handle http request when the Angular web application was serve.
+Builder architecture that use a Stubby server for handle http request when the Angular web application was serve using Angular >= 8 @angular-devkit/architect API.
 
 #### Install it
 ```
