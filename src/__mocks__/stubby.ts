@@ -1,5 +1,3 @@
 export class Stubby {
-    constructor() {
-        console.log('cooool');
-    }
+    start = jest.fn().mockImplementation((options, callback) => callback());
 }

@@ -1,18 +1,14 @@
 import {
     normalize,
-    resolve,
     JsonObject
 } from '@angular-devkit/core';
-import {
-    createBuilder,
-    BuilderContext,
-    BuilderOutput,
-    scheduleTargetAndForget,
-    targetFromTargetString
-} from '@angular-devkit/architect';
-import { readFile } from '@angular-devkit/schematics/tools/file-system-utility';
+import { createBuilder } from '@angular-devkit/architect/src/create-builder';
+import { scheduleTargetAndForget, targetFromTargetString } from '@angular-devkit/architect/src/api';
+import { BuilderContext, BuilderOutput } from '@angular-devkit/architect';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { Observable, of } from 'rxjs';
-import { concatMap, tap, catchError } from 'rxjs/operators';
+import { concatMap, catchError, tap } from 'rxjs/operators';
 
 const { Stubby } = require('stubby');
 
@@ -20,13 +16,13 @@ export interface CustomServeBuilderOptions extends JsonObject {
     devServerTarget: string;
     stubsConfigFile: string;
     watch: boolean;
-    stubs: number;
-    admin: number;
-    tls: number;
-    location: string;
-    key: string;
-    cert: string;
-    pfx: string;
+    // stubs: number;
+    // admin: number;
+    // tls: number;
+    // location: string;
+    // key: string;
+    // cert: string;
+    // pfx: string;
 }
 
 export default createBuilder<CustomServeBuilderOptions>(run);
@@ -56,15 +52,13 @@ function runStubs(
     options: CustomServeBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    const root = normalize(context.workspaceRoot);
-
     return Observable.create((observer: any) => {
         if (options.stubsConfigFile) {
-            const stubsConfigFullPath = resolve(
-                root, 
-                normalize(options.stubsConfigFile)
+            const stubsConfigFullPath = normalize(
+                join(context.workspaceRoot, options.stubsConfigFile)
             );
-            const data = JSON.parse(readFile(stubsConfigFullPath));
+            const data = JSON.parse(readFileSync(stubsConfigFullPath, 'utf8'));
+
             const stubsServer = new Stubby();
 
             stubsServer.start({

@@ -1,10 +1,16 @@
 import { Architect } from '@angular-devkit/architect';
-import { TestingArchitectHost } from '@angular-devkit/architect/testing';
-import { logging, schema } from '@angular-devkit/core';
-import * as path from 'path';
-import CustomServeBuilder from './custom-serve';
+import { scheduleTargetAndForget, targetFromTargetString } from '@angular-devkit/architect/src/api';
+import { TestingArchitectHost } from '@angular-devkit/architect/testing/';
+import { schema, logging } from '@angular-devkit/core';
+import { readFileSync } from 'fs';
+import { normalize } from 'path';
+import { of } from 'rxjs';
+import { CustomServeBuilderOptions } from './custom-serve';
 
 const { Stubby } = require('stubby');
+
+jest.mock('fs');
+jest.mock('stubby');
 
 describe('Ngx Devkit Stubby Builder', () => {
     let architect: Architect;
@@ -16,25 +22,34 @@ describe('Ngx Devkit Stubby Builder', () => {
     
         // Arguments to TestingArchitectHost are workspace and current directories.
         // Since we don't use those, both are the same in this case.
-        architectHost = new TestingArchitectHost('/root', '/root');
+        architectHost = new TestingArchitectHost();
         architect = new Architect(architectHost, registry);
     
         // This will either take a Node package name, or a path to the directory
         // for the package.json file.
-        await architectHost.addBuilderFromPackage(__dirname);
+        const packageJsonPath = normalize(`${__dirname}/..`);
+        await architectHost.addBuilderFromPackage(packageJsonPath);
     });
 
     it('test', async () => {
-        // Create a logger that keeps an array of all messages that were logged.
-        const logger = new logging.Logger('');
-        const logs: any = [];
-        logger.subscribe(ev => logs.push(ev.message));
-
+        (scheduleTargetAndForget as any) = jest
+            .fn()
+            .mockReturnValue(
+                of({ success: true })
+            );
+        (targetFromTargetString as any) = jest
+            .fn()
+            .mockReturnValue(null);
         // A "run" can contain multiple outputs, and contains progress information.
-        const run = await architect.scheduleBuilder('ngx-devkit-stubby-builder:serve', {
-        command: 'ls',
-        args: [__dirname],
-        }, { logger });  // We pass the logger for checking later.
+        const options: CustomServeBuilderOptions = { 
+            devServerTarget: 'test',
+            stubsConfigFile: 'test',
+            watch: false
+        };
+        const run = await architect.scheduleBuilder(
+            'ngx-devkit-stubby-builder:serve', 
+            options
+        );
 
         // The "result" member is the next output of the runner.
         // This is of type BuilderOutput.
@@ -47,9 +62,6 @@ describe('Ngx Devkit Stubby Builder', () => {
 
         // Expect that it succeeded.
         expect(output.success).toBe(true);
-
-        // Expect that this file was listed. It should be since we're running
-        // `ls $__dirname`.
-        expect(logs).toContain('index_spec.ts');
+        expect(targetFromTargetString).toHaveBeenCalledWith(options.devServerTarget);
     });
 });

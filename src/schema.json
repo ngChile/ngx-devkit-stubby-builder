@@ -16,5 +16,5 @@
         "description": "watch mode for stubby"
       }
     },
-    "additionalProperties": false
+    "additionalProperties": true
 }
