@@ -2,6 +2,8 @@ dist: trusty
 language: node_js
 node_js:
   - 10
+services:
+  - docker
 cache:
   npm: true
   directories:
@@ -16,9 +18,3 @@ jobs:
   include:
     - stage: unit-tests
       script: npm test
-deploy:
-  provider: npm
-  email: "$EMAIL_ADDRESS"
-  api_key: "$AUTH_TOKEN"
-  on:
-    branch: master
