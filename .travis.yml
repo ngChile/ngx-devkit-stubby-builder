@@ -16,6 +16,8 @@ jobs:
   include:
     - stage: unit-tests
       script: npm test
+before_deploy:
+  - npm ci
 deploy:
   provider: npm
   email: "$EMAIL_ADDRESS"
