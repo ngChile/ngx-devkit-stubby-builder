@@ -17,14 +17,15 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@angular-devkit/architect": "^0.7.1",
+    "@angular-devkit/architect": "^0.800.0-rc.4",
+    "@angular-devkit/core": "^8.0.0-rc.4",
+    "@angular-devkit/schematics": "^8.0.0-rc.4",
     "stubby": "^4.0.0"
   },
   "peerDependencies": {
     "rxjs": "^6.0.0"
   },
   "devDependencies": {
-    "@angular-devkit/schematics": "^7.3.8",
     "@types/jest": "^24.0.11",
     "@types/node": "^10.3.2",
     "cpr": "^3.0.1",
