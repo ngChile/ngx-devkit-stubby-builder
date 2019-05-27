@@ -1,0 +1,24 @@
+dist: trusty
+language: node_js
+node_js:
+  - 10
+cache:
+  npm: true
+  directories:
+    - ~/.cache
+before_script:
+  - npm install -g @angular/cli
+install:
+  - npm ci
+stages:
+  - name: unit-tests
+jobs:
+  include:
+    - stage: unit-tests
+      script: npm test
+deploy:
+  provider: npm
+  email: "$EMAIL_ADDRESS"
+  api_key: "$AUTH_TOKEN"
+  on:
+    branch: master
