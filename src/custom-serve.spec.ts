@@ -1,7 +1,10 @@
-import { Architect, BuilderContext } from '@angular-devkit/architect';
-import { scheduleTargetAndForget, targetFromTargetString } from '@angular-devkit/architect/src/api';
+import {
+    Architect,
+    scheduleTargetAndForget,
+    targetFromTargetString,
+} from '@angular-devkit/architect';
 import { TestingArchitectHost } from '@angular-devkit/architect/testing/';
-import { schema, logging } from '@angular-devkit/core';
+import { schema } from '@angular-devkit/core';
 import { normalize } from 'path';
 import { of } from 'rxjs';
 import { CustomServeBuilderOptions } from './custom-serve';

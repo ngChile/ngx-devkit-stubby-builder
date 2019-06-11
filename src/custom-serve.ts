@@ -1,14 +1,15 @@
+import { JsonObject } from '@angular-devkit/core';
 import {
-    normalize,
-    JsonObject
-} from '@angular-devkit/core';
-import { createBuilder } from '@angular-devkit/architect/src/create-builder';
-import { scheduleTargetAndForget, targetFromTargetString } from '@angular-devkit/architect/src/api';
-import { BuilderContext, BuilderOutput } from '@angular-devkit/architect';
+    BuilderContext,
+    BuilderOutput,
+    createBuilder,
+    scheduleTargetAndForget,
+    targetFromTargetString,
+} from '@angular-devkit/architect';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Observable, of } from 'rxjs';
-import { concatMap, catchError, tap } from 'rxjs/operators';
+import { Observable, of, Subscriber } from 'rxjs';
+import { concatMap, catchError } from 'rxjs/operators';
 
 const { Stubby } = require('stubby');
 
@@ -16,13 +17,13 @@ export interface CustomServeBuilderOptions extends JsonObject {
     devServerTarget: string;
     stubsConfigFile: string;
     watch: boolean;
-    // stubs: number;
-    // admin: number;
-    // tls: number;
-    // location: string;
-    // key: string;
-    // cert: string;
-    // pfx: string;
+    stubs?: number;
+    admin?: number;
+    tls?: number;
+    location?: string;
+    key?: string;
+    cert?: string;
+    pfx?: string;
 }
 
 export default createBuilder<CustomServeBuilderOptions>(run);
@@ -52,11 +53,9 @@ function runStubs(
     options: CustomServeBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    return Observable.create((observer: any) => {
+    return Observable.create((subscriber: Subscriber<BuilderOutput>) => {
         if (options.stubsConfigFile) {
-            const stubsConfigFullPath = normalize(
-                join(context.workspaceRoot, options.stubsConfigFile)
-            );
+            const stubsConfigFullPath = join(context.workspaceRoot, options.stubsConfigFile);
             const data = JSON.parse(readFileSync(stubsConfigFullPath, 'utf8'));
             const stubsServer = new Stubby();
 
@@ -68,7 +67,7 @@ function runStubs(
                 data
             }, () => {
                 context.logger.info('Stubby Server Running ...');
-                observer.next({ success: true })
+                subscriber.next({ success: true })
             });
         } else {
             throw new Error('Please provide "stubsConfigFile" option on angular.json file for architecture "development"');
