@@ -11,15 +11,15 @@
   "typings": "src/index.d.ts",
   "builders": "builders.json",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage --watch",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit --coverage",
     "tsc": "tsc",
     "build": "npm run tsc"
   },
   "dependencies": {
     "@angular-devkit/architect": "^0.800.0",
-    "@angular-devkit/core": "^8.0.0",
-    "@angular-devkit/schematics": "^8.0.0",
+    "@angular-devkit/core": "^8.3.0",
+    "@angular-devkit/schematics": "^8.3.0",
     "stubby": "^4.0.0"
   },
   "peerDependencies": {
@@ -32,6 +32,6 @@
     "jest": "^24.7.1",
     "jest-junit": "^8.0.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^2.9.1"
+    "typescript": ">=3.4.0 <3.6.0"
   }
 }
