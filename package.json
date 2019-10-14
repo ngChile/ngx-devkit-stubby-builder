@@ -1,6 +1,6 @@
 {
   "name": "ngx-devkit-stubby-builder",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Extensible Builder for the Angular CLI for serve the target application serve task and run and Stubby server for get the control about http requests.",
   "license": "MIT",
   "repository": {
