@@ -17,9 +17,9 @@
     "build": "npm run tsc"
   },
   "dependencies": {
-    "@angular-devkit/architect": "^0.803.9",
-    "@angular-devkit/core": "^8.3.10",
-    "@angular-devkit/schematics": "^8.3.0",
+    "@angular-devkit/architect": "^0.803.10",
+    "@angular-devkit/core": "^8.3.0",
+    "@angular-devkit/schematics": "^8.3.10",
     "stubby": "^4.0.0"
   },
   "peerDependencies": {
