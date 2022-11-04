@@ -18,6 +18,11 @@ jest.mock('fs', () => ({
 jest.mock('stubby', () => ({
     Stubby: jest.fn(),
 }));
+jest.mock('@angular-devkit/architect', () => ({
+    ...(jest.requireActual('@angular-devkit/architect')),
+    targetFromTargetString: jest.fn(),
+    scheduleTargetAndForget: jest.fn(),
+}))
 
 describe('Ngx Devkit Stubby Builder', () => {
     let architect: Architect;
@@ -63,13 +68,11 @@ describe('Ngx Devkit Stubby Builder', () => {
         Stubby.mockImplementation(() => ({
             start: stubbyStartMock,
         }));
-        (scheduleTargetAndForget as any) = jest
-            .fn()
+        (scheduleTargetAndForget as any)
             .mockReturnValue(
                 of({ success: true })
             );
-        (targetFromTargetString as any) = jest
-            .fn()
+        (targetFromTargetString as any)
             .mockReturnValue(null);
         
         // Execute the builder and wait for results

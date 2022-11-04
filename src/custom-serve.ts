@@ -4,7 +4,7 @@ import {
     BuilderOutput,
     createBuilder,
     scheduleTargetAndForget,
-    targetFromTargetString,
+    targetFromTargetString
 } from '@angular-devkit/architect';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -32,11 +32,12 @@ function run(
     options: CustomServeBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    return of(null)
+
+    return of({ success: true })
         .pipe(
             concatMap(() => runStubs(options, context)),
             concatMap(() => startDevServer(options.devServerTarget, true, context)),
-            catchError((error) => {
+            catchError((error) => {
                 context.logger.error(`
                     ++++++++++++++++++++++++++++++++++++
                         Error trying to load stubby
@@ -53,7 +54,7 @@ function runStubs(
     options: CustomServeBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    return Observable.create((subscriber: Subscriber<BuilderOutput>) => {
+    return new Observable((subscriber: Subscriber<BuilderOutput>) => {
         if (options.stubsConfigFile) {
             const stubsConfigFullPath = join(context.workspaceRoot, options.stubsConfigFile);
             const data = JSON.parse(readFileSync(stubsConfigFullPath, 'utf8'));
@@ -79,15 +80,15 @@ function startDevServer(
     devServerTarget: string,
     isWatching: boolean,
     context: BuilderContext
-  ): Observable<BuilderOutput> {
+): Observable<BuilderOutput> {
     // Overrides dev server watch setting.
     const overrides = {
-      watch: isWatching
+        watch: isWatching
     };
     return scheduleTargetAndForget(
-      context,
-      targetFromTargetString(devServerTarget),
-      overrides
+        context,
+        targetFromTargetString(devServerTarget),
+        overrides
     );
-  }
-  
+}
+

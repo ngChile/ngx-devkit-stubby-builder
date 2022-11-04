@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="2.368">
+  <testsuite name="Ngx Devkit Stubby Builder" errors="0" failures="0" skipped="0" timestamp="2022-11-04T02:48:29" time="2.276" tests="1">
+    <testcase classname="Ngx Devkit Stubby Builder test" name="Ngx Devkit Stubby Builder test" time="0.114">
+    </testcase>
+  </testsuite>
+</testsuites>
