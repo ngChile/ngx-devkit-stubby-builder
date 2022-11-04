@@ -7,7 +7,7 @@ import { TestingArchitectHost } from '@angular-devkit/architect/testing/';
 import { schema } from '@angular-devkit/core';
 import { normalize } from 'path';
 import { of } from 'rxjs';
-import { CustomServeBuilderOptions } from './custom-serve';
+import { CustomServeBuilderOptions } from '.';
 
 const { readFileSync } = require('fs');
 const { Stubby } = require('stubby');

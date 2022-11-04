@@ -1,9 +1,10 @@
 {
-    "builders": {
-      "serve": {
-        "implementation": "./src/custom-serve",
-        "schema": "./src/schema.json",
-        "description": " Dev server custom runner using Stubby server."
-      }
+  "schema": "@angular-devkit/architect/src/builders-schema.json",
+  "builders": {
+    "serve": {
+      "implementation": "./stubby",
+      "schema": "./stubby/schema.json",
+      "description": " Dev server custom runner using Stubby server."
     }
   }
+}
